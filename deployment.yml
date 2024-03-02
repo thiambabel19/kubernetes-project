@@ -1,12 +1,39 @@
+# combined-deployment.yml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+        - name: mysql
+          image: mysql:8.0.23
+          ports:
+            - containerPort: 3306
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: root
+            - name: MYSQL_DATABASE
+              value: kubernetesdb
+
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: kubernetesproject
 spec:
+  replicas: 2
   selector:
     matchLabels:
       app: kubernetesproject
-  replicas: 2
   template:
     metadata:
       labels:
@@ -14,7 +41,7 @@ spec:
     spec:
       containers:
         - name: kubernetesproject
-          image: thiambabel/kubernetesproject:latest
+          image: kubernetesproject:1.0
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
